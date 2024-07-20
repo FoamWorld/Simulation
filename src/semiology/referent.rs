@@ -3,9 +3,11 @@ pub enum FunctionalTypes {
     Concrete,
 }
 
+/// Trait for simulating real objects.
+/// Tools for management are not included.
 pub trait Referent {
     fn functional_type(&self) -> FunctionalTypes;
-} // object
+}
 
 pub struct Void {}
 impl Referent for Void {
