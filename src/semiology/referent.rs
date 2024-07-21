@@ -9,8 +9,18 @@ pub trait Referent {
     fn functional_type(&self) -> FunctionalTypes;
 }
 
+/// Empty. Prepared to be overriden.
 pub struct Void {}
 impl Referent for Void {
+    fn functional_type(&self) -> FunctionalTypes {
+        return FunctionalTypes::Concrete;
+    }
+}
+
+pub struct Barrier {
+    level: u8
+}
+impl Referent for Barrier {
     fn functional_type(&self) -> FunctionalTypes {
         return FunctionalTypes::Concrete;
     }
