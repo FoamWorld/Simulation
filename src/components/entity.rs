@@ -14,14 +14,17 @@ pub struct Humanoid {
     dmg_ratio: BTreeMap<String, f32>,
     character: Character,
     memory: Memory,
+    relations: BTreeMap<String, String>,
+    // body_slots
 }
 impl Humanoid {
-    pub fn new() -> Self {
+    pub fn default() -> Self {
         Humanoid {
             properties: BTreeMap::<String, Box<dyn Any>>::new(),
             dmg_ratio: BTreeMap::<String, f32>::new(),
             character: Character::new(),
             memory: Memory::new(),
+            relations: BTreeMap::<String, String>::new(),
         }
     }
 }

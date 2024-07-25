@@ -5,3 +5,4 @@ authors = ["Rratic"]
 license = "MIT"
 
 [dependencies]
+rand = "0.8.5"
