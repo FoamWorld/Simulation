@@ -9,11 +9,17 @@ pub struct Character {
     functions: [u8; 8],
 }
 impl Character {
+    pub fn new() -> Self {
+        Character {
+            libido: 0.0f32,
+            functions: core::array::from_fn::<_, 8, _>(|_| 0u8),
+        }
+    }
     /// E for extroverts, I for introverts  
     /// S for sensation, N for intuition  
     /// T for thinking, F for feeling  
     /// J for judging, P for perceiving
-    pub fn new(code: String, majors: [u8; 4]) -> Self {
+    pub fn from_code(code: String, majors: [u8; 4]) -> Self {
         assert_eq!(4, code.len());
         let bytes = code.as_bytes();
         let decoded = [

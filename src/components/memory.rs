@@ -6,6 +6,11 @@ pub struct Memory {
 }
 
 impl Memory {
+    pub fn new() -> Self {
+        Memory {
+            pool: BTreeMap::<String, i32>::new(),
+        }
+    }
     fn remember(&self, path: String) -> i32 {
         return self.pool[&path];
     }

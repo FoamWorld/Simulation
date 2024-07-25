@@ -1,3 +1,5 @@
+use super::character::Character;
+use super::memory::Memory;
 use std::any::Any;
 use std::collections::BTreeMap;
 
@@ -10,12 +12,16 @@ pub trait Entity {
 pub struct Humanoid {
     properties: BTreeMap<String, Box<dyn Any>>,
     dmg_ratio: BTreeMap<String, f32>,
+    character: Character,
+    memory: Memory,
 }
 impl Humanoid {
     pub fn new() -> Self {
         Humanoid {
             properties: BTreeMap::<String, Box<dyn Any>>::new(),
             dmg_ratio: BTreeMap::<String, f32>::new(),
+            character: Character::new(),
+            memory: Memory::new(),
         }
     }
 }
