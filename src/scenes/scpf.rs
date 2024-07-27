@@ -1,9 +1,11 @@
 use crate::components::character::Character;
 use crate::components::entity::Humanoid;
 use crate::components::memory::Memory;
+use crate::components::tiles::{Decoration, Tiles};
 use rand::distributions::Uniform;
 use rand::prelude::Distribution;
 use rand::Rng;
+use std::any::Any;
 use std::collections::BTreeMap;
 
 fn build_scpf_researcher<R: Rng>(rng: &mut R, authority_level: String) -> Humanoid {
@@ -34,3 +36,15 @@ fn build_scpf_researcher<R: Rng>(rng: &mut R, authority_level: String) -> Humano
 }
 
 fn build_scpf_o5() {}
+
+fn build_site_hall() {
+    let mut tiles = Tiles::new(60, 80);
+    tiles.insert(
+        (0, 0, 5, 5),
+        &Decoration {
+            essence: "desk".to_string(),
+        },
+    );
+}
+
+fn build_site_default() {}

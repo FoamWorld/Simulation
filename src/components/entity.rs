@@ -10,11 +10,11 @@ pub trait Entity {
 }
 
 pub struct Humanoid {
-    properties: BTreeMap<String, Box<dyn Any>>,
-    dmg_ratio: BTreeMap<String, f32>,
-    character: Character,
-    memory: Memory,
-    relations: BTreeMap<String, String>,
+    pub properties: BTreeMap<String, Box<dyn Any>>,
+    pub dmg_ratio: BTreeMap<String, f32>,
+    pub character: Character,
+    pub memory: Memory,
+    pub relations: BTreeMap<String, String>,
     // body_slots
 }
 impl Humanoid {
