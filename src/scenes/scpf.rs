@@ -41,7 +41,7 @@ fn build_site_hall() {
     let mut tiles = Tiles::new(60, 80);
     tiles.insert(
         (0, 0, 5, 5),
-        &Decoration {
+        Decoration {
             essence: "desk".to_string(),
         },
     );
