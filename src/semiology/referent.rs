@@ -1,36 +1,41 @@
-pub enum FunctionalTypes {
-    Control,
-    Concrete,
-}
+use std::any::Any;
 
 /// Trait for simulating real objects.
 /// Tools for management are not included.
 pub trait Referent {
-    fn functional_type(&self) -> FunctionalTypes;
+    fn get(&self, key: String) -> Option<&dyn Any>;
 }
 
 /// Empty. Prepared to be overriden.
 pub struct Void {}
 impl Referent for Void {
-    fn functional_type(&self) -> FunctionalTypes {
-        return FunctionalTypes::Concrete;
+    fn get(&self, _: String) -> Option<&dyn Any> {
+        return None;
     }
 }
 
 pub struct Barrier {
-    level: u8
+    level: u8,
 }
 impl Referent for Barrier {
-    fn functional_type(&self) -> FunctionalTypes {
-        return FunctionalTypes::Concrete;
+    fn get(&self, key: String) -> Option<&dyn Any> {
+        return if key.as_str() == "level" {
+            Some(&self.level)
+        } else {
+            None
+        };
     }
 }
 
 pub struct Container {
-    refer: Box<dyn Referent>
+    refer: Box<dyn Referent>,
 }
 impl Referent for Container {
-    fn functional_type(&self) -> FunctionalTypes {
-        return FunctionalTypes::Control;
+    fn get(&self, key: String) -> Option<&dyn Any> {
+        return if key.as_str() == "refer" {
+            Some(&self.refer)
+        } else {
+            return None;
+        };
     }
 }

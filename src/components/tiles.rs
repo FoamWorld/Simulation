@@ -1,4 +1,4 @@
-use crate::semiology::referent::{FunctionalTypes, Referent};
+use crate::semiology::referent::{Referent, Void};
 use std::{cell::RefCell, rc::Rc};
 
 pub struct Tiles {
@@ -9,9 +9,11 @@ pub struct Tiles {
 
 impl Tiles {
     pub fn new(length: u32, width: u32) -> Self {
+        let mut vec = Vec::<Rc<RefCell<dyn Referent>>>::new();
+        vec.resize((length * width) as usize, Rc::new(RefCell::new(Void {})));
         Tiles {
             area: (length, width),
-            contents: Vec::<Rc<RefCell<dyn Referent>>>::with_capacity((length * width) as usize),
+            contents: vec,
             live_queue: Vec::<Rc<dyn Referent>>::new(),
         }
     }
@@ -39,7 +41,11 @@ pub struct Decoration {
     pub essence: String,
 }
 impl Referent for Decoration {
-    fn functional_type(&self) -> FunctionalTypes {
-        return FunctionalTypes::Concrete;
+    fn get(&self, key: String) -> Option<&dyn std::any::Any> {
+        return if key.to_string() == "essence" {
+            Some(&self.essence)
+        } else {
+            None
+        };
     }
 }
