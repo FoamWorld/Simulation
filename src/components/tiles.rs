@@ -1,5 +1,5 @@
 use crate::semiology::referent::{Referent, Void};
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, rc::Rc, usize};
 
 pub struct Tiles {
     area: (u32, u32),
@@ -21,6 +21,13 @@ impl Tiles {
         let ind = (i * self.area.0 + j) as usize;
         return self.contents[ind].clone();
     }
+    pub fn set<T>(&mut self, i: u32, j: u32, rc: Rc<RefCell<T>>)
+    where
+        T: Referent + 'static,
+    {
+        let ind = (i * self.area.0 + j) as usize;
+        self.contents[ind] = rc;
+    }
     pub fn insert<T>(&mut self, area: (u32, u32, u32, u32), tile: T)
     where
         T: Referent + 'static,
@@ -36,16 +43,3 @@ impl Tiles {
 }
 
 // map: [[Box<dyn Referent>; 32]; 32]
-
-pub struct Decoration {
-    pub essence: String,
-}
-impl Referent for Decoration {
-    fn get(&self, key: String) -> Option<&dyn std::any::Any> {
-        return if key.to_string() == "essence" {
-            Some(&self.essence)
-        } else {
-            None
-        };
-    }
-}

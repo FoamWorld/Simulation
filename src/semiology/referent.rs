@@ -15,7 +15,7 @@ impl Referent for Void {
 }
 
 pub struct Barrier {
-    level: u8,
+    pub level: u8,
 }
 impl Referent for Barrier {
     fn get(&self, key: String) -> Option<&dyn Any> {
@@ -36,6 +36,20 @@ impl Referent for Container {
             Some(&self.refer)
         } else {
             return None;
+        };
+    }
+}
+
+/// A last choice. You can try serializing.
+pub struct Decoration {
+    pub essence: String,
+}
+impl Referent for Decoration {
+    fn get(&self, key: String) -> Option<&dyn std::any::Any> {
+        return if key.to_string() == "essence" {
+            Some(&self.essence)
+        } else {
+            None
         };
     }
 }

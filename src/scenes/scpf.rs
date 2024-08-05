@@ -1,12 +1,15 @@
 use crate::components::character::Character;
 use crate::components::entity::Humanoid;
 use crate::components::memory::Memory;
-use crate::components::tiles::{Decoration, Tiles};
+use crate::components::tiles::Tiles;
+use crate::semiology::referent::Barrier;
 use rand::distributions::Uniform;
 use rand::prelude::Distribution;
 use rand::Rng;
 use std::any::Any;
+use std::cell::RefCell;
 use std::collections::BTreeMap;
+use std::rc::Rc;
 
 fn build_scpf_researcher<R: Rng>(rng: &mut R, authority_level: String) -> Humanoid {
     let uniform = Uniform::new(0x80u8, 0xffu8);
@@ -39,12 +42,10 @@ fn build_scpf_o5() {}
 
 fn build_site_hall() {
     let mut tiles = Tiles::new(60, 80);
-    tiles.insert(
-        (0, 0, 5, 5),
-        Decoration {
-            essence: "desk".to_string(),
-        },
-    );
+    let walls = Rc::new(RefCell::new(Barrier { level: 0x7fu8 }));
+    for i in 0..60 {
+        tiles.set(i, 0, walls.clone());
+    }
 }
 
 fn build_site_default() {}
