@@ -6,7 +6,12 @@ pub trait Referent {
     fn is_dynamic(&self) -> bool {
         return false;
     }
-    fn get(&self, key: String) -> Option<&dyn Any>;
+    fn is_interactive(&self) -> bool {
+        return false;
+    }
+    fn get(&self, key: String) -> Option<&dyn Any> {
+        return None;
+    }
 }
 
 /// Empty. Prepared to be overriden.
