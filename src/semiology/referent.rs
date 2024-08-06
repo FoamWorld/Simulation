@@ -24,6 +24,15 @@ impl Referent for Void {
 
 pub struct Barrier {
     pub level: u8,
+    pub transparent: bool,
+}
+impl Default for Barrier {
+    fn default() -> Self {
+        Barrier {
+            level: 0x7fu8,
+            transparent: false,
+        }
+    }
 }
 impl Referent for Barrier {
     fn get(&self, key: String) -> Option<&dyn Any> {

@@ -33,13 +33,14 @@ impl Tiles {
         T: Referent + 'static,
     {
         let rc = Rc::new(RefCell::<T>::new(tile));
-        for i in area.0..=area.0 + area.2 {
-            for j in area.1..=area.1 + area.3 {
+        for i in area.0..=area.2 {
+            for j in area.1..=area.3 {
                 let ind = (i * self.area.0 + j) as usize;
                 self.contents[ind] = rc.clone();
             }
         }
     }
 }
+impl Referent for Tiles {}
 
 // map: [[Box<dyn Referent>; 32]; 32]

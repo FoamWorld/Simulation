@@ -1,8 +1,9 @@
 use crate::components::character::Character;
 use crate::components::entity::Humanoid;
 use crate::components::memory::Memory;
+use crate::components::passage::Passage;
 use crate::components::tiles::Tiles;
-use crate::semiology::referent::Barrier;
+use crate::semiology::referent::{Barrier, Referent};
 use rand::distributions::Uniform;
 use rand::prelude::Distribution;
 use rand::Rng;
@@ -42,7 +43,10 @@ fn build_scpf_o5() {}
 
 fn build_walled(length: u32, width: u32, barrier_level: u8) -> Tiles {
     let mut tiles = Tiles::new(length, width);
-    let walls = Rc::new(RefCell::new(Barrier { level: barrier_level }));
+    let walls = Rc::new(RefCell::new(Barrier {
+        level: barrier_level,
+        transparent: false,
+    }));
     for i in 0..length {
         tiles.set(i, 0, walls.clone());
         tiles.set(i, width - 1, walls.clone());
@@ -59,3 +63,25 @@ fn build_site_hall() {
 }
 
 fn build_site_default() {}
+
+fn build_std_containment_room(link_src: Rc<RefCell<dyn Referent>>) -> Rc<RefCell<Tiles>> {
+    let tiles_rc = Rc::new(RefCell::new(build_walled(30, 30, 0xa0u8)));
+    let mut tiles = tiles_rc.borrow_mut();
+    tiles.insert(
+        (1, 20, 28, 20),
+        Barrier {
+            level: 0x7fu8,
+            transparent: true,
+        },
+    );
+    tiles.set(
+        23,
+        29,
+        Rc::new(RefCell::new(Passage {
+            locked: Some(1),
+            link_src: tiles_rc.clone(),
+            link_dest: link_src,
+        })),
+    );
+    return tiles_rc.clone();
+}

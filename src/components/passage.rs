@@ -13,11 +13,14 @@ impl Generator for GeneratorTerminus {
 }
 
 pub struct Passage {
-    locked: Option<u32>,
-    link_src: Rc<RefCell<dyn Referent>>,
-    link_dest: Rc<RefCell<dyn Referent>>,
+    pub locked: Option<u32>,
+    pub link_src: Rc<RefCell<dyn Referent>>,
+    pub link_dest: Rc<RefCell<dyn Referent>>,
 }
-
+impl Passage {
+    fn pass(&mut self) {
+    }
+}
 impl Referent for Passage {
     fn is_interactive(&self) -> bool {
         return true;
