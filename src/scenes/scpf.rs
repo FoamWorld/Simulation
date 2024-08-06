@@ -40,12 +40,22 @@ fn build_scpf_researcher<R: Rng>(rng: &mut R, authority_level: String) -> Humano
 
 fn build_scpf_o5() {}
 
-fn build_site_hall() {
-    let mut tiles = Tiles::new(60, 80);
+fn build_walled(length: u32, width: u32) -> Tiles {
+    let mut tiles = Tiles::new(length, width);
     let walls = Rc::new(RefCell::new(Barrier { level: 0x7fu8 }));
-    for i in 0..60 {
+    for i in 0..length {
         tiles.set(i, 0, walls.clone());
+        tiles.set(i, width - 1, walls.clone());
     }
+    for j in 1..width - 1 {
+        tiles.set(0, j, walls.clone());
+        tiles.set(length - 1, j, walls.clone());
+    }
+    return tiles;
+}
+
+fn build_site_hall() {
+    let mut tiles = build_walled(80, 60);
 }
 
 fn build_site_default() {}

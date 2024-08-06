@@ -3,6 +3,9 @@ use std::any::Any;
 /// Trait for simulating real objects.
 /// Tools for management are not included.
 pub trait Referent {
+    fn is_dynamic(&self) -> bool {
+        return false;
+    }
     fn get(&self, key: String) -> Option<&dyn Any>;
 }
 

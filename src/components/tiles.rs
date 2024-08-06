@@ -4,7 +4,7 @@ use std::{cell::RefCell, rc::Rc, usize};
 pub struct Tiles {
     area: (u32, u32),
     contents: Vec<Rc<RefCell<dyn Referent>>>,
-    live_queue: Vec<Rc<dyn Referent>>,
+    live_queue: Vec<Rc<RefCell<dyn Referent>>>,
 }
 
 impl Tiles {
@@ -14,7 +14,7 @@ impl Tiles {
         Tiles {
             area: (length, width),
             contents: vec,
-            live_queue: Vec::<Rc<dyn Referent>>::new(),
+            live_queue: Vec::<Rc<RefCell<dyn Referent>>>::new(),
         }
     }
     pub fn get(&self, i: u32, j: u32) -> Rc<RefCell<(dyn Referent + 'static)>> {
