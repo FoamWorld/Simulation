@@ -1,5 +1,5 @@
 use crate::components::character::Character;
-use crate::components::entity::Humanoid;
+use crate::components::entity::{Humanoid, NumericEntity};
 use crate::components::memory::Memory;
 use crate::components::passage::Passage;
 use crate::components::tiles::Tiles;
@@ -85,3 +85,8 @@ fn build_std_containment_room(link_src: Rc<RefCell<dyn Referent>>) -> Rc<RefCell
     );
     return tiles_rc.clone();
 }
+
+fn create_entity_rat() -> NumericEntity {
+    NumericEntity::new("rat".to_string(), 100, 10, 11)
+}
+// create_entity_encoded_073_traditional
