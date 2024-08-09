@@ -1,8 +1,8 @@
 use crate::components::character::Character;
 use crate::components::entity::{Humanoid, NumericEntity};
 use crate::components::memory::Memory;
-use crate::components::passage::Passage;
-use crate::components::tiles::Tiles;
+use crate::components::passage::{passage_portal, Generator, Passage};
+use crate::components::tiles::{self, Tiles};
 use crate::semiology::referent::{Barrier, Referent};
 use rand::distributions::Uniform;
 use rand::prelude::Distribution;
@@ -77,16 +77,80 @@ fn build_std_containment_room(link_src: Rc<RefCell<dyn Referent>>) -> Rc<RefCell
     tiles.set(
         23,
         29,
-        Rc::new(RefCell::new(Passage {
-            locked: Some(1),
-            link_src: tiles_rc.clone(),
-            link_dest: link_src,
-        })),
+        Rc::new(RefCell::new(passage_portal(tiles_rc.clone(), link_src))),
     );
     return tiles_rc.clone();
 }
 
 fn create_entity_rat() -> NumericEntity {
-    NumericEntity::new("rat".to_string(), 100, 10, 11)
+    NumericEntity::new("rat".to_string(), 100.0, 10.0, 11.0)
 }
 // create_entity_encoded_073_traditional
+
+fn build_random_containment_room(parent: Rc<RefCell<dyn Referent>>) -> Rc<RefCell<Tiles>> {
+    let tiles_rc = build_std_containment_room(parent);
+    tiles_rc
+        .borrow_mut()
+        .set(10, 10, Rc::new(RefCell::new(create_entity_rat())));
+    return tiles_rc;
+}
+
+fn build_random_containment_corridor(
+    left: Option<Rc<RefCell<dyn Referent>>>,
+    right: Option<Rc<RefCell<dyn Referent>>>,
+) -> Rc<RefCell<dyn Referent>> {
+    let tiles_rc = Rc::new(RefCell::new(build_walled(120, 9, 0x70u8)));
+    for i in 1..5 {
+        tiles_rc.borrow_mut().set(
+            i * 24,
+            0,
+            Rc::new(RefCell::new(Passage::new(
+                tiles_rc.clone(),
+                Generator::new(|| build_random_containment_room(tiles_rc.clone())),
+            ))),
+        );
+    }
+    match left {
+        Some(x) => {
+            tiles_rc.borrow_mut().set(
+                0,
+                4,
+                Rc::new(RefCell::new(passage_portal(tiles_rc.clone(), x))),
+            );
+        }
+        None => {
+            tiles_rc.borrow_mut().set(
+                0,
+                4,
+                Rc::new(RefCell::new(Passage::new(
+                    tiles_rc.clone(),
+                    Generator::new(|| {
+                        build_random_containment_corridor(None, Some(tiles_rc.clone()))
+                    }),
+                ))),
+            );
+        }
+    }
+    match right {
+        Some(x) => {
+            tiles_rc.borrow_mut().set(
+                0,
+                119,
+                Rc::new(RefCell::new(passage_portal(tiles_rc.clone(), x))),
+            );
+        }
+        None => {
+            tiles_rc.borrow_mut().set(
+                0,
+                119,
+                Rc::new(RefCell::new(Passage::new(
+                    tiles_rc.clone(),
+                    Generator::new(|| {
+                        build_random_containment_corridor(Some(tiles_rc.clone()), None)
+                    }),
+                ))),
+            );
+        }
+    }
+    return tiles_rc;
+}

@@ -13,10 +13,10 @@ impl<T> Generator<T>
 where
     T: Fn() -> Rc<RefCell<dyn Referent>>,
 {
-    fn new(gen: T) -> Self {
+    pub fn new(gen: T) -> Self {
         return Generator { generator: gen };
     }
-    fn generate(&self) -> Rc<RefCell<dyn Referent>> {
+    pub fn generate(&self) -> Rc<RefCell<dyn Referent>> {
         return (self.generator)();
     }
 }
@@ -34,21 +34,14 @@ impl<T> Passage<T>
 where
     T: Fn() -> Rc<RefCell<dyn Referent>>,
 {
-    fn new(src: Rc<RefCell<dyn Referent>>, gen: Generator<T>) -> Self {
+    pub fn new(src: Rc<RefCell<dyn Referent>>, gen: Generator<T>) -> Self {
         Self {
             link_src: src,
             link_dest: Rc::new(RefCell::new(Void {})),
             gen_dest: Some(gen),
         }
     }
-    fn portal(src: Rc<RefCell<dyn Referent>>, dest: Rc<RefCell<dyn Referent>>) -> Self {
-        Self {
-            link_src: src,
-            link_dest: dest,
-            gen_dest: None,
-        }
-    }
-    fn pass(&mut self, uncached: bool) -> Rc<RefCell<dyn Referent>> {
+    pub fn pass(&mut self, uncached: bool) -> Rc<RefCell<dyn Referent>> {
         if uncached {
             match self.gen_dest.borrow() {
                 Some(x) => {
@@ -66,5 +59,17 @@ where
 {
     fn is_interactive(&self) -> bool {
         return true;
+    }
+}
+
+type DefaultGenFn = fn() -> Rc<RefCell<dyn Referent>>;
+pub fn passage_portal(
+    src: Rc<RefCell<dyn Referent>>,
+    dest: Rc<RefCell<dyn Referent>>,
+) -> Passage<DefaultGenFn> {
+    Passage::<DefaultGenFn> {
+        link_src: src,
+        link_dest: dest,
+        gen_dest: None,
     }
 }

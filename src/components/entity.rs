@@ -4,7 +4,7 @@ use crate::semiology::referent::Referent;
 use std::any::Any;
 use std::collections::BTreeMap;
 
-pub trait Entity {
+pub trait Entity: Referent {
     fn get_property(&self, key: String) -> Option<&Box<dyn Any>>;
     fn set_property(&mut self, key: String, value: Box<dyn Any>);
     fn damage_calc(&self, dmg: f32, dmg_type: String) -> f32;
@@ -12,13 +12,13 @@ pub trait Entity {
 
 pub struct NumericEntity {
     pub title: String,
-    pub health: u32,
-    pub damage: u32,
-    pub armor: u32,
-    pub current_health: u32,
+    pub health: f32,
+    pub damage: f32,
+    pub armor: f32,
+    pub current_health: f32,
 }
 impl NumericEntity {
-    pub fn new(title: String, health: u32, damage: u32, armor: u32) -> Self {
+    pub fn new(title: String, health: f32, damage: f32, armor: f32) -> Self {
         Self {
             title: title,
             health: health,
@@ -28,10 +28,21 @@ impl NumericEntity {
         }
     }
 }
+impl Referent for NumericEntity {}
+impl Entity for NumericEntity {
+    fn get_property(&self, key: String) -> Option<&Box<dyn Any>> {
+        return None;
+    }
+    fn set_property(&mut self, key: String, value: Box<dyn Any>) {}
+    fn damage_calc(&self, dmg: f32, _: String) -> f32 {
+        return dmg;
+    }
+}
 
 pub struct Dummy {
     pub refer: Box<dyn Entity>,
 }
+impl Referent for Dummy {}
 impl Entity for Dummy {
     fn get_property(&self, key: String) -> Option<&Box<dyn Any>> {
         return self.refer.get_property(key);
@@ -63,6 +74,7 @@ impl Default for Humanoid {
         }
     }
 }
+impl Referent for Humanoid {}
 impl Entity for Humanoid {
     fn get_property(&self, key: String) -> Option<&Box<dyn Any>> {
         return self.properties.get(&key);
