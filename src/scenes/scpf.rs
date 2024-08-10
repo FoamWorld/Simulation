@@ -58,8 +58,9 @@ fn build_walled(length: u32, width: u32, barrier_level: u8) -> Tiles {
     return tiles;
 }
 
-fn build_site_hall() {
+fn build_site_hall() -> Tiles {
     let mut tiles = build_walled(80, 60, 0x7fu8);
+    return tiles;
 }
 
 fn build_site_default() {}
@@ -106,7 +107,7 @@ fn build_random_containment_corridor(
             0,
             Rc::new(RefCell::new(Passage::new(
                 tiles_rc.clone(),
-                Generator::new(|| build_random_containment_room(tiles_rc.clone())),
+                Generator::new(|x| build_random_containment_room(x)),
             ))),
         );
     }
@@ -124,9 +125,7 @@ fn build_random_containment_corridor(
                 4,
                 Rc::new(RefCell::new(Passage::new(
                     tiles_rc.clone(),
-                    Generator::new(|| {
-                        build_random_containment_corridor(None, Some(tiles_rc.clone()))
-                    }),
+                    Generator::new(|x| build_random_containment_corridor(None, Some(x))),
                 ))),
             );
         }
@@ -145,9 +144,7 @@ fn build_random_containment_corridor(
                 119,
                 Rc::new(RefCell::new(Passage::new(
                     tiles_rc.clone(),
-                    Generator::new(|| {
-                        build_random_containment_corridor(Some(tiles_rc.clone()), None)
-                    }),
+                    Generator::new(|x| build_random_containment_corridor(Some(x), None)),
                 ))),
             );
         }
