@@ -1,8 +1,9 @@
 use super::rune::{EveFlux, Rune};
+use bevy_ecs::entity::Entity;
 use std::cell::RefCell;
 
 struct CircleSrc {
-    nodes: Vec<Box<RefCell<dyn Rune>>>,
+    nodes: Vec<Entity>,
     edges: Vec<Fuse>,
 }
 
