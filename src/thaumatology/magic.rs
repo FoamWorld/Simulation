@@ -1,4 +1,5 @@
-use super::rune::{ComposedConcept, EveFlux, Rune};
+use super::rune::{EveFlux, Rune};
+use crate::semiology::composed::ComposedConcept;
 use std::cell::{Ref, RefCell};
 
 struct CircleSrc {
@@ -19,9 +20,7 @@ impl CircleSrc {
         let len = self.nexts[from].len();
         for i in 0..len {
             let mut fuse = self.edges[from][i];
-            let mut branch_flux = EveFlux {
-                flux: flux.flux / (len as f32),
-            };
+            let mut branch_flux = flux.copy_with(flux.flux / (len as f32));
             fuse.spark(&mut branch_flux);
             let next = self.nexts[from][i];
             self.start(next, &mut branch_flux, &mut istream.clone());
