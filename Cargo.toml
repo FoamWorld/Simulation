@@ -5,6 +5,15 @@ authors = ["Rratic"]
 license = "MIT"
 
 [dependencies]
-bevy_ecs = "0.14.1"
+avian2d = "0.1.2"
+bevy = { version = "0.14", default-features = false, features = [
+	"bevy_core_pipeline",
+	"bevy_state",
+	"bevy_text",
+	"bevy_ui",
+	"bevy_asset",
+	"bevy_render",
+	"bevy_sprite",
+] }
 rand = "0.8.5"
-serde_json = "1.0.128"
+serde_json = "1.0"
