@@ -1,7 +1,13 @@
-#[derive(Component)]
-struct Actor;
+use avian2d::{math::*, prelude::*};
+use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
-fn setup_actor(
+#[derive(Component)]
+pub struct Actor;
+
+#[derive(Component)]
+pub struct MovementSpeed(Scalar);
+
+pub fn setup_actor(
     mut commands: Commands,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -19,6 +25,37 @@ fn setup_actor(
         LockedAxes::ROTATION_LOCKED,
         Restitution::ZERO.with_combine_rule(CoefficientCombine::Min),
         Collider::rectangle(actor_size.x, actor_size.y),
+        MovementSpeed(100.0),
         Actor,
     ));
+}
+
+pub fn movement(
+    mut commands: Commands,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut actors: Query<(&mut LinearVelocity, &MovementSpeed), With<Actor>>,
+) {
+    for (mut linear_velocity, movement_speed) in &mut actors {
+        let xneg = keyboard_input.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]);
+        let xpos = keyboard_input.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]);
+        let yneg = keyboard_input.any_pressed([KeyCode::KeyS, KeyCode::ArrowDown]);
+        let ypos = keyboard_input.any_pressed([KeyCode::KeyW, KeyCode::ArrowUp]);
+        linear_velocity.x = (xpos as i8 - xneg as i8) as Scalar * movement_speed.0;
+        linear_velocity.y = (ypos as i8 - yneg as i8) as Scalar * movement_speed.0;
+        if keyboard_input.just_pressed(KeyCode::KeyQ) {
+            commands.spawn((
+                SpriteBundle {
+                    sprite: Sprite {
+                        color: Color::srgb(1.0, 0.0, 0.0),
+                        custom_size: Some(Vec2::splat(10.0)),
+                        ..default()
+                    },
+                    transform: Transform::from_xyz(30.0, 0.0, 1.0),
+                    ..default()
+                },
+                RigidBody::Dynamic,
+                Collider::circle(5.0),
+            ));
+        }
+    }
 }
