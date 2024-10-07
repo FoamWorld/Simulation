@@ -15,7 +15,7 @@ use bevy::prelude::*;
 mod fps_text;
 use fps_text::FpsTextPlugin;
 
-use physics::control::{movement, setup_actor};
+use physics::control::*;
 
 #[bevy_main]
 fn main() {
@@ -37,9 +37,11 @@ fn main() {
     ));
     app.insert_resource(ClearColor(Color::srgb(0.9, 0.9, 0.9)));
     app.insert_resource(Gravity(Vector::ZERO));
+    app.init_resource::<CursorCoords>();
     app.add_systems(Startup, setup);
     app.add_systems(Startup, setup_actor);
-    app.add_systems(Update, movement);
+    app.add_systems(Update, keyboard_inputs);
+    app.add_systems(Update, translate_cursor_position);
     app.run();
 }
 
@@ -48,7 +50,7 @@ fn setup(
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut meshes: ResMut<Assets<Mesh>>,
 ) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn((Camera2dBundle::default(), MainCamera));
     let square_sprite = Sprite {
         color: Color::srgb(0.1, 0.0, 1.0),
         custom_size: Some(Vec2::splat(10.0)),

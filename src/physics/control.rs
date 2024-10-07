@@ -1,11 +1,17 @@
 use avian2d::{math::*, prelude::*};
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
+use bevy::{prelude::*, sprite::MaterialMesh2dBundle, window::PrimaryWindow};
 
 #[derive(Component)]
 pub struct Actor;
 
 #[derive(Component)]
 pub struct MovementSpeed(Scalar);
+
+#[derive(Resource, Default)]
+pub struct CursorCoords(Option<Vec2>);
+
+#[derive(Component)]
+pub struct MainCamera;
 
 pub fn setup_actor(
     mut commands: Commands,
@@ -30,8 +36,22 @@ pub fn setup_actor(
     ));
 }
 
-pub fn movement(
+pub fn translate_cursor_position(
+    mut coords: ResMut<CursorCoords>,
+    q_window: Query<&Window, With<PrimaryWindow>>,
+    q_camera: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
+) {
+    let (camera, camera_transform) = q_camera.single();
+    let window = q_window.single();
+    coords.0 = window
+        .cursor_position()
+        .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
+        .map(|ray| ray.origin.truncate());
+}
+
+pub fn keyboard_inputs(
     mut commands: Commands,
+    mut coords: ResMut<CursorCoords>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut actors: Query<(&mut LinearVelocity, &MovementSpeed), With<Actor>>,
 ) {
@@ -43,19 +63,24 @@ pub fn movement(
         linear_velocity.x = (xpos as i8 - xneg as i8) as Scalar * movement_speed.0;
         linear_velocity.y = (ypos as i8 - yneg as i8) as Scalar * movement_speed.0;
         if keyboard_input.just_pressed(KeyCode::KeyQ) {
-            commands.spawn((
-                SpriteBundle {
-                    sprite: Sprite {
-                        color: Color::srgb(1.0, 0.0, 0.0),
-                        custom_size: Some(Vec2::splat(10.0)),
-                        ..default()
-                    },
-                    transform: Transform::from_xyz(30.0, 0.0, 1.0),
-                    ..default()
-                },
-                RigidBody::Dynamic,
-                Collider::circle(5.0),
-            ));
+            match coords.0 {
+                Some(pos) => {
+                    commands.spawn((
+                        SpriteBundle {
+                            sprite: Sprite {
+                                color: Color::srgb(1.0, 0.0, 0.0),
+                                custom_size: Some(Vec2::splat(10.0)),
+                                ..default()
+                            },
+                            transform: Transform::from_xyz(pos.x, pos.y, 1.0),
+                            ..default()
+                        },
+                        RigidBody::Dynamic,
+                        Collider::circle(5.0),
+                    ));
+                }
+                None => break,
+            }
         }
     }
 }
