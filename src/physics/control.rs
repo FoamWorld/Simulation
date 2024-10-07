@@ -1,5 +1,5 @@
 use avian2d::{math::*, prelude::*};
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle, window::PrimaryWindow};
+use bevy::{math::VectorSpace, prelude::*, sprite::MaterialMesh2dBundle, window::PrimaryWindow};
 
 #[derive(Component)]
 pub struct Actor;
@@ -49,9 +49,7 @@ pub fn translate_cursor_position(
         .map(|ray| ray.origin.truncate());
 }
 
-pub fn keyboard_inputs(
-    mut commands: Commands,
-    mut coords: ResMut<CursorCoords>,
+pub fn inputs_move(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut actors: Query<(&mut LinearVelocity, &MovementSpeed), With<Actor>>,
 ) {
@@ -62,6 +60,16 @@ pub fn keyboard_inputs(
         let ypos = keyboard_input.any_pressed([KeyCode::KeyW, KeyCode::ArrowUp]);
         linear_velocity.x = (xpos as i8 - xneg as i8) as Scalar * movement_speed.0;
         linear_velocity.y = (ypos as i8 - yneg as i8) as Scalar * movement_speed.0;
+    }
+}
+
+pub fn inputs_q(
+    mut commands: Commands,
+    mut coords: ResMut<CursorCoords>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut actors: Query<(&Position), With<Actor>>,
+) {
+    for (position) in &mut actors {
         if keyboard_input.just_pressed(KeyCode::KeyQ) {
             match coords.0 {
                 Some(pos) => {
@@ -69,14 +77,15 @@ pub fn keyboard_inputs(
                         SpriteBundle {
                             sprite: Sprite {
                                 color: Color::srgb(1.0, 0.0, 0.0),
-                                custom_size: Some(Vec2::splat(10.0)),
+                                custom_size: Some(Vec2::splat(4.0)),
                                 ..default()
                             },
                             transform: Transform::from_xyz(pos.x, pos.y, 1.0),
                             ..default()
                         },
                         RigidBody::Dynamic,
-                        Collider::circle(5.0),
+                        Collider::circle(2.0),
+                        LinearVelocity(Vec2::new(pos.x - position.x, pos.y - position.y)),
                     ));
                 }
                 None => break,

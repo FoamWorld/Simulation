@@ -40,8 +40,7 @@ fn main() {
     app.init_resource::<CursorCoords>();
     app.add_systems(Startup, setup);
     app.add_systems(Startup, setup_actor);
-    app.add_systems(Update, keyboard_inputs);
-    app.add_systems(Update, translate_cursor_position);
+    app.add_systems(Update, (translate_cursor_position, inputs_move, inputs_q));
     app.run();
 }
 
