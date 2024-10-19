@@ -12,6 +12,9 @@ extern crate bevy;
 use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
 
+mod constants;
+use constants::*;
+
 mod fps_text;
 use fps_text::FpsTextPlugin;
 
@@ -25,7 +28,7 @@ fn main() {
         DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Simulation v0.1.0".into(),
-                resolution: (800., 600.).into(),
+                resolution: WINDOW_AREA.into(),
                 resizable: false,
                 decorations: true,
                 ..default()
@@ -33,7 +36,7 @@ fn main() {
             ..default()
         }),
         FpsTextPlugin,
-        PhysicsPlugins::default().with_length_unit(20.0),
+        PhysicsPlugins::default().with_length_unit(PHYSCIS_UNIT),
     ));
     app.insert_resource(ClearColor(Color::srgb(0.9, 0.9, 0.9)));
     app.insert_resource(Gravity(Vector::ZERO));
@@ -44,11 +47,7 @@ fn main() {
     app.run();
 }
 
-fn setup(
-    mut commands: Commands,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-    mut meshes: ResMut<Assets<Mesh>>,
-) {
+fn setup(mut commands: Commands) {
     commands.spawn((Camera2dBundle::default(), MainCamera));
     let square_sprite = Sprite {
         color: Color::srgb(0.1, 0.0, 1.0),
