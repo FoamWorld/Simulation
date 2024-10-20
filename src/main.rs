@@ -1,4 +1,5 @@
 #![allow(warnings, unused)]
+extern crate rand;
 extern crate serde_json;
 
 mod physics;
@@ -19,6 +20,9 @@ mod fps_text;
 use fps_text::FpsTextPlugin;
 
 use physics::control::*;
+
+mod scenes;
+use scenes::maze::build_maze_chunk;
 
 #[bevy_main]
 fn main() {
@@ -43,6 +47,7 @@ fn main() {
     app.init_resource::<CursorCoords>();
     app.add_systems(Startup, setup);
     app.add_systems(Startup, setup_actor);
+    app.add_systems(Update, (inputs_move, update_camera).chain());
     app.add_systems(Update, (translate_cursor_position, inputs_move, inputs_q));
     app.run();
 }
@@ -54,24 +59,5 @@ fn setup(mut commands: Commands) {
         custom_size: Some(Vec2::splat(10.0)),
         ..default()
     };
-    commands.spawn((
-        SpriteBundle {
-            sprite: square_sprite.clone(),
-            transform: Transform::from_xyz(-30.0, 0.0, 1.0).with_scale(Vec3::new(1.0, 11.0, 1.0)),
-            ..default()
-        },
-        RigidBody::Static,
-        Collider::rectangle(10.0, 10.0),
-    ));
-    commands.spawn((
-        SpriteBundle {
-            sprite: square_sprite.clone(),
-            transform: Transform::from_xyz(30.0, 0.0, 1.0),
-            ..default()
-        },
-        Mass(100.0),
-        Friction::new(0.4).with_dynamic_coefficient(0.6),
-        RigidBody::Dynamic,
-        Collider::rectangle(10.0, 10.0),
-    ));
+    build_maze_chunk(commands, &mut rand::thread_rng(), 20.0, 20.0);
 }

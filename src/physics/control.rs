@@ -63,6 +63,24 @@ pub fn inputs_move(
     }
 }
 
+pub fn update_camera(
+    mut camera: Query<&mut Transform, (With<Camera2d>, Without<Actor>)>,
+    player: Query<&Transform, (With<Actor>, Without<Camera2d>)>,
+    time: Res<Time>,
+) {
+    let Ok(mut camera) = camera.get_single_mut() else {
+        return;
+    };
+    let Ok(player) = player.get_single() else {
+        return;
+    };
+    let Vec3 { x, y, .. } = player.translation;
+    let direction = Vec3::new(x, y, camera.translation.z);
+    camera.translation = camera
+        .translation
+        .lerp(direction, time.delta_seconds() * 2.0);
+}
+
 pub fn inputs_q(
     mut commands: Commands,
     mut coords: ResMut<CursorCoords>,
@@ -77,7 +95,7 @@ pub fn inputs_q(
                         SpriteBundle {
                             sprite: Sprite {
                                 color: Color::srgb(1.0, 0.0, 0.0),
-                                custom_size: Some(Vec2::splat(4.0)),
+                                custom_size: Some(Vec2::splat(10.0)),
                                 ..default()
                             },
                             transform: Transform::from_xyz(pos.x, pos.y, 1.0),

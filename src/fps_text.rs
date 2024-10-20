@@ -1,8 +1,5 @@
-/*
-Edited from:
-https://github.com/Jondolf/avian/blob/39a7480cd1915bc5266aa8ebd3c3436d4d0568b0/crates/examples_common_2d/src/lib. rs
-LICENSE: MIT
-*/
+// Licensed under the MIT license
+// Adapted from: https://github.com/Jondolf/avian : examples_common_2d
 use std::time::Duration;
 
 use avian2d::prelude::*;
