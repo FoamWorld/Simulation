@@ -1,72 +1,21 @@
-use std::any::Any;
+/// Trait for conceptional binging with real objects.
+/// Used to compute shadows.
+pub struct Reference {
+    expr: Option<String>,
+}
+impl Reference {
+    fn shadow(_: &Referent) -> Self {
+        Reference { expr: None }
+    }
+}
 
 /// Trait for simulating real objects.
 /// Tools for management are not included.
 pub trait Referent {
-    fn is_dynamic(&self) -> bool {
-        return false;
+    fn is_static(&self) -> bool {
+        return true;
     }
     fn is_interactive(&self) -> bool {
         return false;
-    }
-    fn get(&self, key: String) -> Option<&dyn Any> {
-        return None;
-    }
-}
-
-/// Empty. Prepared to be overriden.
-pub struct Void {}
-impl Referent for Void {
-    fn get(&self, _: String) -> Option<&dyn Any> {
-        return None;
-    }
-}
-
-pub struct Barrier {
-    pub level: u8,
-    pub transparent: bool,
-}
-impl Default for Barrier {
-    fn default() -> Self {
-        Barrier {
-            level: 0x7fu8,
-            transparent: false,
-        }
-    }
-}
-impl Referent for Barrier {
-    fn get(&self, key: String) -> Option<&dyn Any> {
-        return if key.as_str() == "level" {
-            Some(&self.level)
-        } else {
-            None
-        };
-    }
-}
-
-pub struct Container {
-    refer: Box<dyn Referent>,
-}
-impl Referent for Container {
-    fn get(&self, key: String) -> Option<&dyn Any> {
-        return if key.as_str() == "refer" {
-            Some(&self.refer)
-        } else {
-            return None;
-        };
-    }
-}
-
-/// A last choice. You can try serializing.
-pub struct Decoration {
-    pub essence: String,
-}
-impl Referent for Decoration {
-    fn get(&self, key: String) -> Option<&dyn std::any::Any> {
-        return if key.to_string() == "essence" {
-            Some(&self.essence)
-        } else {
-            None
-        };
     }
 }

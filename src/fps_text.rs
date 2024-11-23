@@ -4,7 +4,6 @@ use std::time::Duration;
 
 use avian2d::prelude::*;
 use bevy::{
-    color::palettes::css::TOMATO,
     diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin},
     prelude::*,
 };
@@ -71,7 +70,7 @@ fn setup(mut commands: Commands) {
             TextStyle {
                 font: default(),
                 font_size: 20.0,
-                color: TOMATO.into(),
+                color: bevy::color::palettes::css::DARK_GRAY.into(),
             },
         )
         .with_style(Style {
